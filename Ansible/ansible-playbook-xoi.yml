@@ -1,0 +1,32 @@
+---
+- hosts: xoitest
+  tasks:
+   - name: Add the user1 with uid 2000 and join to the groups
+     user:
+       name: user1 
+       uid: 2000 
+       groups: root,docker,test
+
+   - name: User1's AuthorizedKey 
+     authorized_key:
+       user: user1 
+       state: present
+       key: "{{ lookup('file', './pubkey/user-rsa.pub') }}"
+   
+   - name: Add the user2 with no specific uid and join to the groups 
+     user:
+       name: user2 
+       groups: root,docker,test
+
+   - name: Copying MOTD file to user1 homedir 
+     copy:
+       src: ./files/MOTD 
+       dest: /home/user1/MOTD
+       mode: 0700
+
+   - name: Copying MOTD file to user2 homedir 
+     copy:
+       src: ./files/MOTD
+       dest: /home/user2/MOTD
+       mode: 0700
+...
